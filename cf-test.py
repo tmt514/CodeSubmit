@@ -12,8 +12,8 @@ def main():
       help='Codeforces problem ID (Ex: 514A)')
   args = parser.parse_args()
 
-  if os.path.exists("sample-000.in") == False:
-    os.system(["cf-fetch", args.prob])
+  if os.path.exists("sample-%s-000.in" % args.prob) == False:
+    os.system("cf-fetch %s" % args.prob)
 
   if os.path.exists(args.prob) == False:
     print("Please compile your code first!")

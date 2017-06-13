@@ -12,6 +12,7 @@ def main():
       help='Codeforces problem ID (Ex: 514A)')
   args = parser.parse_args()
 
+  print("======= Fetching Samples [%s] =======" % args.prob)
   cid, pid = [re.search(r'(\d+)(\w+)', args.prob).group(x) for x in [1, 2]]
   url = "http://codeforces.com/problemset/problem/%s/%s" % (cid, pid)
   page = requests.get(url)
@@ -31,6 +32,8 @@ def main():
       f.write(intext + "\n")
     with open(outfile, "w") as f:
       f.write(outtext + "\n")
+    print("created %s" % infile)
+    print("created %s" % outfile)
 
   
 if __name__ == "__main__":

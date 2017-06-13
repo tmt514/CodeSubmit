@@ -6,6 +6,8 @@ from robobrowser import RoboBrowser
 import requests
 import json
 import time
+from termcolor import colored
+from bs4 import BeautifulSoup
 
 def get_submission_data(user):
     req = requests.get('http://codeforces.com/api/user.status?'
@@ -16,7 +18,31 @@ def get_submission_data(user):
         raise ConnectionError('Codeforces BOOM!')
     res = js['result'][0]
     id_, verdict = res['id'], res['verdict']
-    return id_, verdict
+    testno = res['passedTestCount']
+    testtime = res['timeConsumedMillis']
+    testmem = res['memoryConsumedBytes']
+    return id_, verdict, testno, testtime, testmem
+
+
+def shout_verdict(id_, verdict, testno, testtime, testmem):
+    if verdict == "TESTING":
+        req = requests.get('http://codeforces.com/problemset/status')
+        page = req.text
+        page = BeautifulSoup(page, "lxml")
+        sub = list(page.find_all(attrs={"data-submission-id" : id_}))
+        if len(sub) == 0:
+          print("[%s] Running (too many submissions!)" % (id_))
+        else:
+          verdict = "".join(sub[0].find_all("span", class_="submissionVerdictWrapper")[0].strings)
+          print("[%s] %s" % (id_, verdict))
+        # Codeforces API does not provide live update
+        # print("[%s] Running on test %d" % (id_, testno+1))
+    elif verdict == "OK":
+        v_ = colored(verdict, 'green')
+        print("[%s] %s (time=%d ms, memory=%d KB)" % (id_, v_, testtime, testmem))
+    else:
+        v_ = colored(verdict, 'red')
+        print("[%s] %s on test %d" % (id_, v_, testno+1))
 
 
 def main():
@@ -32,7 +58,7 @@ def main():
     args = parser.parse_args()
 
     user_name = args.user
-    last_id, _ = get_submission_data(user_name)
+    last_id, *_ = get_submission_data(user_name)
 
     passwd = getpass()
 
@@ -69,11 +95,13 @@ def main():
 
     print('Submitted, wait for result...')
     while True:
-        id_, verdict = get_submission_data(user_name)
+        id_, verdict, *blah = get_submission_data(user_name)
+        if id_ != last_id:
+            shout_verdict(id_, verdict, *blah)
         if id_ != last_id and verdict != 'TESTING':
-            print('Verdict = {}'.format(verdict))
+            # print('Verdict = {}'.format(verdict))
             break
-        time.sleep(5)
+        time.sleep(3)
 
 if __name__ == '__main__':
     main()

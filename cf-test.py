@@ -27,9 +27,9 @@ def main():
     userout = "sample-%s-%03d.out" % (args.prob, i)
     outfile = "sample-%s-%03d.ans" % (args.prob, i)
     print("======= Sample #%d =======" % i)
-    os.system("./%s < %s > %s", args.prob, infilfe, userout)
-    os.system("cat %s", userout)
-    os.system("cat %s", outfile)
+    os.system("./%s < %s > %s" % (args.prob, infile, userout))
+    os.system("cat %s" % userout)
+    os.system("cat %s" % outfile)
     i += 1
   
   

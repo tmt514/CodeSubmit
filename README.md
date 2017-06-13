@@ -10,4 +10,4 @@ A command line codeforces fetching sample tests and run sample tests for super l
 or you can run `python3 install.py` so the scripts are installed into `~/.local/bin` directory.
 
 ## Dependency
-`RoboBrowser, requests, bs4`
+`RoboBrowser, requests, termcolor`

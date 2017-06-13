@@ -22,7 +22,7 @@ def main():
   cid, pid = [re.search(r'(\d+)(\w+)', args.prob).group(x) for x in [1, 2]]
   
   i = 0
-  while os.path.exists("sample-%03d.in" % i):
+  while os.path.exists("sample-%s-%03d.in" % (args.prob, i)):
     infile = "sample-%s-%03d.in" % (args.prob, i)
     userout = "sample-%s-%03d.out" % (args.prob, i)
     outfile = "sample-%s-%03d.ans" % (args.prob, i)
